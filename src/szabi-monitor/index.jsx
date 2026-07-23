@@ -1,6 +1,7 @@
 import { useState } from "react";
 import "./styles.css";
 import { KEY, TYPES, DEFAULT_STATE } from "./constants.js";
+import { todayISO } from "./utils.js";
 import { usePersistentState } from "./hooks/usePersistentState.js";
 import { useNow } from "./hooks/useNow.js";
 import { useMonitorStats } from "./hooks/useMonitorStats.js";
@@ -12,18 +13,21 @@ import { StatsGrid } from "./components/StatsGrid.jsx";
 import { Heatmap } from "./components/Heatmap.jsx";
 import { IncidentLog } from "./components/IncidentLog.jsx";
 import { LogModal } from "./components/LogModal.jsx";
+import { IntroModal } from "./components/IntroModal.jsx";
 
 /* ------------------------------------------------------------------ */
-/*  SZABI-MONITOR — horror címtábla, nyugalmi állapot (3a)             */
+/*  INCIDENS MONITOR— horror címtábla, nyugalmi állapot (3a)             */
 /* ------------------------------------------------------------------ */
 
 export default function SzabiMonitor() {
-  const [state, setState, { storageOk }] = usePersistentState(KEY, DEFAULT_STATE);
+  const [state, setState, { loaded, storageOk, hasSavedData }] = usePersistentState(KEY, DEFAULT_STATE);
   const now = useNow();
 
   const [flash, setFlash] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [pendingType, setPendingType] = useState(null);
+  const [introDone, setIntroDone] = useState(false);
+  const showIntro = loaded && !hasSavedData && !introDone;
 
   const {
     incidents, digits,
@@ -64,6 +68,45 @@ export default function SzabiMonitor() {
   const setStart = (start) => setState((p) => ({ ...p, config: { ...p.config, start } }));
   const setEnd = (end) => setState((p) => ({ ...p, config: { ...p.config, end } }));
 
+  /* első indítású beállítás — a modal csak akkor jelenik meg, ha még nincs        */
+  /* mentett adat; a megerősítéssel jön létre az első kimenthető állapot           */
+  const confirmIntro = ({ start, end }) => {
+    setState((p) => ({ ...p, config: { ...p.config, start, end } }));
+    setIntroDone(true);
+  };
+
+  const buildExport = () => JSON.stringify(
+    { exportedAt: new Date().toISOString(), config: state.config, incidents: state.incidents },
+    null,
+    2,
+  );
+
+  const exportData = () => {
+    const blob = new Blob([buildExport()], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `szabi-monitor-${todayISO()}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const copyData = async () => {
+    const json = buildExport();
+    try {
+      await navigator.clipboard.writeText(json);
+    } catch {
+      const ta = document.createElement("textarea");
+      ta.value = json;
+      ta.style.position = "fixed";
+      ta.style.opacity = "0";
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand("copy");
+      ta.remove();
+    }
+  };
+
   const cleanDays = dayBuckets.slice(0, elapsedDays).filter((d) => d.n === 0).length;
   const topOffender = offenders.length ? offenders[0] : null;
 
@@ -75,6 +118,8 @@ export default function SzabiMonitor() {
           totalDays={totalDays}
           showSettings={showSettings}
           onToggleSettings={setShowSettings}
+          onExport={exportData}
+          onCopy={copyData}
         />
 
         {showSettings && (
@@ -124,6 +169,8 @@ export default function SzabiMonitor() {
       {pendingType && (
         <LogModal type={pendingType} offenders={offenders} onConfirm={confirmLog} onCancel={cancelLog} />
       )}
+
+      {showIntro && <IntroModal onConfirm={confirmIntro} />}
     </div>
   );
 }

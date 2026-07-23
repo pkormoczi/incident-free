@@ -67,8 +67,16 @@
   color: var(--sm-muted);
 }
 
-.sm-period-btn {
+.sm-header-actions {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  align-items: center;
   margin-top: 6px;
+}
+
+.sm-period-btn {
   background: transparent;
   border: 1px solid var(--sm-line);
   color: var(--sm-muted);
@@ -470,6 +478,12 @@
 
 .sm-modal-field .sm-inp { width: 100%; box-sizing: border-box; }
 
+.sm-modal-error {
+  color: var(--sm-blood);
+  font-size: 12px;
+  margin: -4px 0 12px;
+}
+
 .sm-modal-actions {
   display: flex;
   justify-content: flex-end;
@@ -496,6 +510,11 @@
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
+}
+
+.sm-modal-confirm:disabled {
+  opacity: .45;
+  cursor: not-allowed;
 }
 
 /* ------------------------------------------------------------------ */
