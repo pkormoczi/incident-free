@@ -1,0 +1,522 @@
+@import url('https://fonts.googleapis.com/css2?family=Archivo+Black&family=Barlow+Condensed:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;600&display=swap');
+
+:root {
+  --sm-void: #0a0a0a;
+  --sm-card: #1a0e0e;
+  --sm-line: #3a1414;
+  --sm-line-2: #2b1414;
+  --sm-blood: #c8342b;
+  --sm-blood-dark: #7a2420;
+  --sm-bone: #e8e2d6;
+  --sm-muted: rgba(232, 226, 214, .55);
+  --sm-muted-2: rgba(232, 226, 214, .32);
+
+  --sm-font-display: 'Archivo Black', sans-serif;
+  --sm-font-body: 'Barlow Condensed', 'Helvetica Neue', sans-serif;
+  --sm-font-mono: 'IBM Plex Mono', monospace;
+}
+
+/* ------------------------------------------------------------------ */
+/*  layout                                                             */
+/* ------------------------------------------------------------------ */
+
+.sm-root {
+  background: var(--sm-void);
+  min-height: 100%;
+  padding: 24px 16px 48px;
+  font-family: var(--sm-font-body);
+  color: var(--sm-bone);
+}
+
+.sm-container {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+/* ------------------------------------------------------------------ */
+/*  fejléc + haladás                                                   */
+/* ------------------------------------------------------------------ */
+
+.sm-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 18px;
+}
+
+.sm-header-eyebrow {
+  font-family: var(--sm-font-mono);
+  font-size: 11px;
+  letter-spacing: 3px;
+  color: var(--sm-blood);
+}
+
+.sm-header-title {
+  font-family: var(--sm-font-display);
+  font-size: 30px;
+  line-height: 1.05;
+  letter-spacing: -0.5px;
+}
+
+.sm-header-meta {
+  text-align: right;
+  font-family: var(--sm-font-mono);
+  font-size: 12px;
+  color: var(--sm-muted);
+}
+
+.sm-period-btn {
+  margin-top: 6px;
+  background: transparent;
+  border: 1px solid var(--sm-line);
+  color: var(--sm-muted);
+  padding: 4px 8px;
+  border-radius: 2px;
+  cursor: pointer;
+  font-family: var(--sm-font-mono);
+  font-size: 11px;
+}
+
+.sm-progress {
+  height: 4px;
+  background: var(--sm-line-2);
+  border-radius: 2px;
+  overflow: hidden;
+  margin: 0 auto 10px;
+  max-width: 420px;
+}
+
+.sm-progress-fill {
+  height: 100%;
+  background: var(--sm-blood);
+}
+
+/* ------------------------------------------------------------------ */
+/*  időszak panel                                                      */
+/* ------------------------------------------------------------------ */
+
+.sm-settings {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  align-items: center;
+  padding: 12px;
+  background: var(--sm-card);
+  border: 1px solid var(--sm-line-2);
+  margin-bottom: 16px;
+}
+
+.sm-settings-label {
+  font-size: 14px;
+  color: var(--sm-muted);
+}
+
+.sm-settings-input {
+  margin-left: 8px;
+}
+
+.sm-reset-btn {
+  margin-left: auto;
+  background: transparent;
+  border: 1px solid var(--sm-blood);
+  color: var(--sm-blood);
+  padding: 6px 10px;
+  border-radius: 2px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+/* ------------------------------------------------------------------ */
+/*  a kártya — egybefüggő panel, minden szekció ezen belül              */
+/* ------------------------------------------------------------------ */
+
+.sm-card {
+  position: relative;
+  overflow: hidden;
+  background: var(--sm-card);
+  border: 1px solid var(--sm-line-2);
+  border-radius: 4px;
+  padding: 28px 22px 22px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, .5);
+}
+
+.sm-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(0deg, rgba(255, 255, 255, .025) 0 1px, transparent 1px 3px);
+  pointer-events: none;
+}
+
+.sm-card > * {
+  position: relative;
+}
+
+.sm-divider {
+  border-top: 1px dashed var(--sm-line);
+  margin: 22px 0;
+}
+
+/* ------------------------------------------------------------------ */
+/*  számláló                                                            */
+/* ------------------------------------------------------------------ */
+
+.sm-board-section {
+  text-align: center;
+}
+
+.sm-board-label {
+  font-family: var(--sm-font-mono);
+  font-size: 12px;
+  letter-spacing: 3px;
+  color: var(--sm-muted);
+  text-transform: uppercase;
+}
+
+.sm-digit-big {
+  font-family: var(--sm-font-display);
+  font-size: clamp(72px, 20vw, 140px);
+  line-height: .9;
+  color: var(--sm-bone);
+  text-shadow: 0 0 24px rgba(200, 52, 43, .5), 0 0 2px rgba(200, 52, 43, .4);
+  margin: 10px 0 4px;
+}
+
+.sm-board-record {
+  font-family: var(--sm-font-mono);
+  font-size: 13px;
+  color: var(--sm-muted);
+  margin-bottom: 14px;
+}
+
+.sm-board-caption {
+  font-family: var(--sm-font-mono);
+  font-size: 12px;
+  color: var(--sm-muted);
+}
+
+@keyframes smPulse {
+  0% { text-shadow: 0 0 24px rgba(200, 52, 43, .5), 0 0 2px rgba(200, 52, 43, .4); }
+  40% { text-shadow: 0 0 46px rgba(200, 52, 43, .95), 0 0 10px rgba(200, 52, 43, .85); }
+  100% { text-shadow: 0 0 24px rgba(200, 52, 43, .5), 0 0 2px rgba(200, 52, 43, .4); }
+}
+
+.sm-flash .sm-digit-big { animation: smPulse .7s ease; }
+
+/* ------------------------------------------------------------------ */
+/*  elkövetés módja                                                     */
+/* ------------------------------------------------------------------ */
+
+.sm-form-section {
+  text-align: center;
+}
+
+.sm-section-heading {
+  font-family: var(--sm-font-body);
+  font-weight: 700;
+  font-size: 18px;
+  color: var(--sm-bone);
+  margin-bottom: 16px;
+}
+
+.sm-section-heading--mono {
+  font-family: var(--sm-font-mono);
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--sm-muted);
+  text-align: left;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+.sm-type-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.sm-type-btn {
+  border: 1.5px dashed var(--sm-line);
+  background: transparent;
+  color: var(--sm-bone);
+  padding: 14px 10px;
+  border-radius: 3px;
+  font-family: var(--sm-font-body);
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.sm-type-btn:hover { border-color: var(--sm-blood); color: var(--sm-blood); }
+
+.sm-type-btn.is-critical {
+  border: 1.5px solid var(--sm-blood);
+  color: var(--sm-blood);
+}
+
+.sm-type-caption {
+  font-size: 13px;
+  color: var(--sm-muted);
+  text-align: center;
+  line-height: 1.5;
+}
+
+/* ------------------------------------------------------------------ */
+/*  statisztika                                                        */
+/* ------------------------------------------------------------------ */
+
+.sm-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.sm-stat {
+  border: 1px dashed var(--sm-line);
+  border-radius: 3px;
+  padding: 14px 10px;
+  text-align: center;
+}
+
+.sm-stat-value {
+  font-family: var(--sm-font-display);
+  font-size: 22px;
+  color: var(--sm-bone);
+}
+
+.sm-stat-label {
+  font-family: var(--sm-font-mono);
+  font-size: 10px;
+  letter-spacing: 1px;
+  color: var(--sm-muted);
+  margin-top: 4px;
+  text-transform: uppercase;
+}
+
+.sm-stat--wide {
+  grid-column: span 2;
+  border: 1px solid var(--sm-blood);
+}
+
+.sm-stat--accent .sm-stat-value,
+.sm-stat--accent .sm-stat-label {
+  color: var(--sm-blood);
+}
+
+/* ------------------------------------------------------------------ */
+/*  naptérkép                                                           */
+/* ------------------------------------------------------------------ */
+
+.sm-heatmap-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+  margin-top: 10px;
+}
+
+.sm-cell {
+  aspect-ratio: 1 / 1;
+  border-radius: 2px;
+  border: 1px solid var(--sm-line);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--sm-font-mono);
+  font-size: 11px;
+}
+
+.sm-cell--future { background: transparent; color: var(--sm-muted-2); }
+.sm-cell--clean { background: rgba(255, 255, 255, .03); color: var(--sm-muted-2); }
+.sm-cell--warn { background: var(--sm-blood-dark); color: var(--sm-bone); }
+.sm-cell--alarm { background: var(--sm-blood); color: var(--sm-bone); }
+
+/* ------------------------------------------------------------------ */
+/*  kill list                                                           */
+/* ------------------------------------------------------------------ */
+
+.sm-log-empty {
+  padding: 16px 0 4px;
+  color: var(--sm-muted);
+  font-size: 15px;
+  text-align: center;
+}
+
+.sm-kill-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  padding: 10px 2px;
+  border-bottom: 1px dashed var(--sm-line-2);
+  cursor: pointer;
+  font-size: 15px;
+}
+
+.sm-kill-row:hover { background: rgba(255, 255, 255, .025); }
+
+.sm-kill-meta {
+  font-family: var(--sm-font-mono);
+  font-size: 13px;
+  color: var(--sm-bone);
+}
+
+.sm-kill-min {
+  font-family: var(--sm-font-mono);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--sm-blood);
+  white-space: nowrap;
+}
+
+.sm-kill-row--editing {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+  padding: 10px 2px;
+  border-bottom: 1px dashed var(--sm-line-2);
+  cursor: default;
+}
+
+.sm-kill-edit-input { flex: 1 1 100px; }
+.sm-kill-edit-mins { flex: 0 1 70px; }
+
+.sm-kill-save {
+  background: var(--sm-blood-dark);
+  color: var(--sm-bone);
+  border: none;
+  padding: 8px 12px;
+  border-radius: 2px;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.sm-kill-remove {
+  background: transparent;
+  border: 1px solid var(--sm-blood);
+  color: var(--sm-blood);
+  padding: 8px 12px;
+  border-radius: 2px;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.sm-kill-more {
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: transparent;
+  border: none;
+  color: var(--sm-muted);
+  font-family: var(--sm-font-mono);
+  font-size: 13px;
+  padding-top: 12px;
+  cursor: pointer;
+}
+
+.sm-kill-more:hover { color: var(--sm-blood); }
+
+.sm-storage-warning {
+  margin-top: 16px;
+  font-size: 14px;
+  color: var(--sm-blood);
+}
+
+/* ------------------------------------------------------------------ */
+/*  rögzítő ablak (modal)                                               */
+/* ------------------------------------------------------------------ */
+
+.sm-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, .7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  z-index: 50;
+}
+
+.sm-modal {
+  background: var(--sm-card);
+  border: 1px solid var(--sm-line);
+  border-radius: 4px;
+  padding: 20px;
+  max-width: 340px;
+  width: 100%;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, .6);
+}
+
+.sm-modal-title {
+  font-family: var(--sm-font-body);
+  font-weight: 700;
+  font-size: 17px;
+  color: var(--sm-bone);
+  margin-bottom: 16px;
+}
+
+.sm-modal-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--sm-muted);
+  margin-bottom: 12px;
+}
+
+.sm-modal-field .sm-inp { width: 100%; box-sizing: border-box; }
+
+.sm-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.sm-modal-cancel {
+  background: transparent;
+  border: 1px solid var(--sm-line);
+  color: var(--sm-muted);
+  padding: 8px 14px;
+  border-radius: 2px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.sm-modal-confirm {
+  background: var(--sm-blood-dark);
+  color: var(--sm-bone);
+  border: none;
+  padding: 8px 14px;
+  border-radius: 2px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* ------------------------------------------------------------------ */
+/*  megosztott interakciós elemek (gomb / input)                       */
+/* ------------------------------------------------------------------ */
+
+.sm-btn { transition: transform .08s ease, background .15s ease, border-color .15s ease, color .15s ease; }
+.sm-btn:active { transform: translateY(1px); }
+.sm-btn:focus-visible, .sm-inp:focus-visible { outline: 2px solid var(--sm-blood); outline-offset: 2px; }
+
+.sm-inp {
+  background: rgba(255, 255, 255, .03);
+  border: 1px solid var(--sm-line);
+  color: var(--sm-bone);
+  font-family: var(--sm-font-body);
+  font-size: 16px;
+  padding: 8px 10px;
+  border-radius: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sm-flash .sm-digit-big { animation: none; }
+  .sm-btn { transition: none; }
+}
