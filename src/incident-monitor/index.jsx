@@ -16,10 +16,10 @@ import { LogModal } from "./components/LogModal.jsx";
 import { IntroModal } from "./components/IntroModal.jsx";
 
 /* ------------------------------------------------------------------ */
-/*  INCIDENS MONITOR— horror címtábla, nyugalmi állapot (3a)             */
+/*  INCIDENT-MONITOR — horror címtábla, nyugalmi állapot (3a)          */
 /* ------------------------------------------------------------------ */
 
-export default function SzabiMonitor() {
+export default function IncidentMonitor() {
   const [state, setState, { loaded, storageOk, hasSavedData }] = usePersistentState(KEY, DEFAULT_STATE);
   const now = useNow();
 
@@ -86,7 +86,7 @@ export default function SzabiMonitor() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `szabi-monitor-${todayISO()}.json`;
+    a.download = `incident-monitor-${todayISO()}.json`;
     a.click();
     URL.revokeObjectURL(url);
   };

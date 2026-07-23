@@ -31,8 +31,8 @@ is unaffected and still serves from `/`.
 
 ## Architecture
 
-The app is rendered by `src/main.jsx` from `src/szabi-monitor/index.jsx` (`SzabiMonitor`),
-which is decomposed into layers under `src/szabi-monitor/`:
+The app is rendered by `src/main.jsx` from `src/incident-monitor/index.jsx` (`IncidentMonitor`),
+which is decomposed into layers under `src/incident-monitor/`:
 
 - `constants.js` — `KEY` (storage key), `TYPES` (interruption categories: `id`, `label`
   (legacy, unused for display), `pick` (type-grid button text, e.g. `"a PROD"`), `short`
@@ -41,7 +41,7 @@ which is decomposed into layers under `src/szabi-monitor/`:
 - `utils.js` — pure date/format helpers: `todayISO`, `addDays`, `startOfDay`, `fmtDate`,
   `relLogDate` (renders a KILL LIST timestamp as `"ma HH:MM"` / `"tegn. HH:MM"` / `"N napja"`).
 - `hooks/usePersistentState.js` — round-trips state through `window.storage.get/set` under
-  key `szabi-monitor:v1`. `window.storage` is not a browser API — it's polyfilled in
+  key `incident-monitor:v1`. `window.storage` is not a browser API — it's polyfilled in
   `src/storage-shim.js` (imported for its side effect in `main.jsx`, before the component
   renders) as a thin wrapper over `localStorage`. The load effect sets `storageOk = false`
   if `window.storage` is missing entirely; the save effect skips the very first render

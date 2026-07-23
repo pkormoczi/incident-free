@@ -16,10 +16,6 @@ export function IncidentForm({ onLog }) {
           </button>
         ))}
       </div>
-
-      <div className="sm-type-caption">
-        koppintás = azonnali rögzítés · részletek (ki, hány perc, megjegyzés) utólag, a napló listából
-      </div>
     </div>
   );
 }

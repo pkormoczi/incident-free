@@ -1,4 +1,4 @@
-# szabi-monitor
+# incident-monitor
 
 Egy "hány napja nem szakított meg senki munka közben" számláló, horror "kill list"
 hangulatban — ki, mikor és mennyi időt lopott el tőled.
@@ -35,7 +35,7 @@ Nincs teszt-keretrendszer a projektben.
 
 - [React](https://react.dev/) 19 + [Vite](https://vite.dev/)
 - [oxlint](https://oxc.rs/) lintelés (`react`, `oxc` pluginokkal, lásd `.oxlintrc.json`)
-- Sima CSS-egyéni-tulajdonságok (`src/szabi-monitor/styles.css`) — nincs CSS-in-JS,
+- Sima CSS-egyéni-tulajdonságok (`src/incident-monitor/styles.css`) — nincs CSS-in-JS,
   nincs UI-keretrendszer
 
 A kódstruktúra részletes leírását lásd a [`CLAUDE.md`](./CLAUDE.md) fájlban.

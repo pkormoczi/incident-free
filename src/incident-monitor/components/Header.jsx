@@ -13,7 +13,7 @@ export function Header({ elapsedDays, totalDays, showSettings, onToggleSettings,
     <div className="sm-header">
       <div>
         <div className="sm-header-eyebrow">TÚLÉLÉSI NAPLÓ</div>
-        <div className="sm-header-title">INCIDENS MONITOR</div>
+        <div className="sm-header-title">INCIDENT-MONITOR</div>
       </div>
       <div className="sm-header-meta">
         <div>{elapsedDays} / {totalDays}. NAP</div>

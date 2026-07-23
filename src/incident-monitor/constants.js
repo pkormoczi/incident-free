@@ -1,6 +1,6 @@
 import { DAY, todayISO, addDays } from "./utils.js";
 
-export const KEY = "szabi-monitor:v1";
+export const KEY = "incident-monitor:v1";
 
 export const TYPES = [
   { id: "mail", label: "„Csak nézz rá egy levélre”", pick: "a Levél", short: "Levél", min: 20 },
