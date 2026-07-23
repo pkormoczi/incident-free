@@ -23,6 +23,12 @@ npm run lint      # oxlint (see .oxlintrc.json — react + oxc plugins)
 There is no test suite/framework configured in this repo. Verification is build + lint +
 driving the app in an actual (headless) browser.
 
+`.github/workflows/deploy.yml` lints, builds, and deploys `dist/` to GitHub Pages on every
+push to `main` (GitHub Actions as the Pages build source — no `gh-pages` branch involved).
+Because Pages serves this as a project site under `/incident-free/`, `vite.config.js` sets
+`base` to that path in production builds only (`mode === 'production'`), so `npm run dev`
+is unaffected and still serves from `/`.
+
 ## Architecture
 
 The app is rendered by `src/main.jsx` from `src/szabi-monitor/index.jsx` (`SzabiMonitor`),

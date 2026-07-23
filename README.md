@@ -11,6 +11,14 @@ egy megjegyzés, mielőtt a bejegyzés rögzül. Emellett van napi statisztika, 
 Kizárólag kliensoldali, egyetlen React komponensfa — nincs backend, az adatok a böngésző
 `localStorage`-ában élnek.
 
+**Élő verzió:** https://pkormoczi.github.io/incident-free/
+
+## Deployment
+
+A `main`-re történő push automatikusan lintel, buildel, és kiteszi az appot GitHub
+Pages-re (`.github/workflows/deploy.yml`, GitHub Actions mint Pages build-forrás — nincs
+külön `gh-pages` branch). Kézi újrafuttatás az Actions fülön, "Run workflow" gombbal.
+
 ## Fejlesztés
 
 ```
