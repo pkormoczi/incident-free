@@ -1,7 +1,9 @@
 import { useState } from "react";
 import "./styles.css";
 import { KEY, TYPES, DEFAULT_STATE } from "./constants.js";
-import { todayISO } from "./utils.js";
+import { todayISO, validateImport } from "./utils.js";
+import { getContext } from "./context.js";
+import meData from "./data/me.json";
 import { usePersistentState } from "./hooks/usePersistentState.js";
 import { useNow } from "./hooks/useNow.js";
 import { useTheme } from "./hooks/useTheme.js";
@@ -21,8 +23,22 @@ import { ImportModal } from "./components/ImportModal.jsx";
 /*  INCIDENT-MONITOR — horror címtábla, nyugalmi állapot (3a)          */
 /* ------------------------------------------------------------------ */
 
+/* #me: ideiglenes, csak-JSON kontextus — a beépített data/me.json mindig mérvadó,     */
+/* localStorage-hoz nem nyúl (sem az alap kulcsot, sem sajátot), a szerkesztések csak  */
+/* a memóriában élnek. Modulszinten dől el, mert a kontextus csak újratöltéssel válthat. */
+const CONTEXT = getContext();
+const ME_STATE = (() => {
+  const r = validateImport(meData);
+  return r.ok
+    ? { config: r.data.config ?? DEFAULT_STATE.config, incidents: r.data.incidents }
+    : DEFAULT_STATE;
+})();
+
 export default function IncidentMonitor() {
-  const [state, setState, { loaded, storageOk, hasSavedData }] = usePersistentState(KEY, DEFAULT_STATE);
+  const [state, setState, { loaded, storageOk, hasSavedData }] = usePersistentState(
+    CONTEXT === "me" ? null : KEY,
+    CONTEXT === "me" ? ME_STATE : DEFAULT_STATE,
+  );
   const now = useNow();
   const [theme, toggleTheme] = useTheme();
 
@@ -31,7 +47,7 @@ export default function IncidentMonitor() {
   const [pendingType, setPendingType] = useState(null);
   const [introDone, setIntroDone] = useState(false);
   const [showImport, setShowImport] = useState(false);
-  const showIntro = loaded && !hasSavedData && !introDone;
+  const showIntro = CONTEXT === "base" && loaded && !hasSavedData && !introDone;
 
   const {
     incidents, digits,
@@ -177,6 +193,13 @@ export default function IncidentMonitor() {
         {!storageOk && (
           <div className="sm-storage-warning">
             A mentés nem elérhető ebben a környezetben — az adatok az oldal bezárásáig élnek.
+          </div>
+        )}
+
+        {CONTEXT === "me" && (
+          <div className="sm-storage-warning">
+            Személyes nézet (#me): a beépített adatokat mutatja. A módosítások nem mentődnek —
+            exportáld és commitold a JSON-t a megőrzésükhöz.
           </div>
         )}
       </div>

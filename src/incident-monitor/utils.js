@@ -19,18 +19,11 @@ export const relLogDate = (ts, now) => {
   return `${dayDiff} napja`;
 };
 
-/* beillesztett/betöltött export-JSON validálása importhoz; elfogadja mind a teljes    */
-/* export alakot ({ exportedAt, config, incidents }), mind a nyers állapotot           */
+/* egy már JSON.parse-olt objektum alak-validálása; elfogadja mind a teljes export     */
+/* alakot ({ exportedAt, config, incidents }), mind a nyers állapotot                  */
 /* ({ config, incidents }) — az exportedAt-ot és minden más kulcsot figyelmen kívül    */
 /* hagyja. Sikeres eredmény: { ok: true, data: { config?, incidents } }.               */
-export const parseImport = (text) => {
-  let parsed;
-  try {
-    parsed = JSON.parse(text);
-  } catch {
-    return { ok: false, error: "A szöveg nem érvényes JSON." };
-  }
-
+export const validateImport = (parsed) => {
   if (typeof parsed !== "object" || parsed === null || Array.isArray(parsed)) {
     return { ok: false, error: "Ismeretlen adatformátum." };
   }
@@ -50,4 +43,15 @@ export const parseImport = (text) => {
   }
 
   return { ok: true, data: { config, incidents } };
+};
+
+/* beillesztett/betöltött export-JSON szöveg validálása importhoz — ld. validateImport. */
+export const parseImport = (text) => {
+  let parsed;
+  try {
+    parsed = JSON.parse(text);
+  } catch {
+    return { ok: false, error: "A szöveg nem érvényes JSON." };
+  }
+  return validateImport(parsed);
 };

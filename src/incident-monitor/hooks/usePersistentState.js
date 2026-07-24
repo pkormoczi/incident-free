@@ -9,6 +9,10 @@ export function usePersistentState(key, defaultState) {
   const firstRun = useRef(true);
 
   useEffect(() => {
+    /* key === null: a hívó szándékosan nem kér perzisztenciát (pl. a #me kontextus       */
+    /* saját, mindig-friss kezdőállapottal fut) — betöltöttnek számít, de storage-hoz     */
+    /* nem nyúl.                                                                          */
+    if (!key) { setLoaded(true); return; }
     (async () => {
       try {
         const r = await window.storage.get(key);
@@ -26,7 +30,7 @@ export function usePersistentState(key, defaultState) {
   }, [key]);
 
   useEffect(() => {
-    if (!loaded) return;
+    if (!loaded || !key) return;
     if (firstRun.current) { firstRun.current = false; return; }
     (async () => {
       try { await window.storage.set(key, JSON.stringify(state)); }

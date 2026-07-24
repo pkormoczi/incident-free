@@ -1,0 +1,6 @@
+{
+  "config": { "start": "2026-06-01", "end": "2026-07-12" },
+  "incidents": [
+    { "id": "seed1", "ts": 1749110400000, "type": "prod", "min": 120, "who": "példa", "note": "" }
+  ]
+}
