@@ -4,7 +4,7 @@ import { useState } from "react";
 /* adat; a szabi kezdő- és végdátumát kéri be. Kötelező kitölteni, nincs Mégse/    */
 /* Escape/backdrop-bezárás, mert enélkül nincs érvényes állapot, amit menteni      */
 /* lehetne.                                                                        */
-export function IntroModal({ onConfirm }) {
+export function IntroModal({ onConfirm, onImport }) {
   const [start, setStart] = useState("");
   const [end, setEnd] = useState("");
 
@@ -50,6 +50,9 @@ export function IntroModal({ onConfirm }) {
           )}
 
           <div className="sm-modal-actions">
+            <button type="button" className="sm-btn sm-modal-cancel" onClick={onImport}>
+              Van mentésem — importálom
+            </button>
             <button type="submit" className="sm-btn sm-modal-confirm" disabled={!canSubmit}>
               Indulhat
             </button>

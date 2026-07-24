@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-export function Header({ elapsedDays, totalDays, showSettings, onToggleSettings, onExport, onCopy }) {
+export function Header({ elapsedDays, totalDays, showSettings, onToggleSettings, onExport, onImport, onCopy }) {
   const [copied, setCopied] = useState(false);
 
   const handleCopy = async () => {
@@ -26,6 +26,9 @@ export function Header({ elapsedDays, totalDays, showSettings, onToggleSettings,
           </button>
           <button className="sm-btn sm-period-btn" onClick={onExport}>
             EXPORT
+          </button>
+          <button className="sm-btn sm-period-btn" onClick={onImport}>
+            IMPORT
           </button>
           <button className="sm-btn sm-period-btn" onClick={handleCopy}>
             {copied ? "MÁSOLVA ✓" : "MÁSOLÁS"}

@@ -14,6 +14,7 @@ import { Heatmap } from "./components/Heatmap.jsx";
 import { IncidentLog } from "./components/IncidentLog.jsx";
 import { LogModal } from "./components/LogModal.jsx";
 import { IntroModal } from "./components/IntroModal.jsx";
+import { ImportModal } from "./components/ImportModal.jsx";
 
 /* ------------------------------------------------------------------ */
 /*  INCIDENT-MONITOR — horror címtábla, nyugalmi állapot (3a)          */
@@ -27,6 +28,7 @@ export default function IncidentMonitor() {
   const [showSettings, setShowSettings] = useState(false);
   const [pendingType, setPendingType] = useState(null);
   const [introDone, setIntroDone] = useState(false);
+  const [showImport, setShowImport] = useState(false);
   const showIntro = loaded && !hasSavedData && !introDone;
 
   const {
@@ -107,6 +109,14 @@ export default function IncidentMonitor() {
     }
   };
 
+  /* teljes csere: a beolvasott incidents mindig felülír, a config csak akkor, ha az   */
+  /* import tartalmazza — különben a jelenlegi Első/Utolsó nap marad                    */
+  const importData = (data) => {
+    setState((p) => ({ config: data.config ?? p.config, incidents: data.incidents }));
+    setShowImport(false);
+    setIntroDone(true);
+  };
+
   const cleanDays = dayBuckets.slice(0, elapsedDays).filter((d) => d.n === 0).length;
   const topOffender = offenders.length ? offenders[0] : null;
 
@@ -119,6 +129,7 @@ export default function IncidentMonitor() {
           showSettings={showSettings}
           onToggleSettings={setShowSettings}
           onExport={exportData}
+          onImport={() => setShowImport(true)}
           onCopy={copyData}
         />
 
@@ -170,7 +181,11 @@ export default function IncidentMonitor() {
         <LogModal type={pendingType} offenders={offenders} onConfirm={confirmLog} onCancel={cancelLog} />
       )}
 
-      {showIntro && <IntroModal onConfirm={confirmIntro} />}
+      {showIntro && !showImport && <IntroModal onConfirm={confirmIntro} onImport={() => setShowImport(true)} />}
+
+      {showImport && (
+        <ImportModal onConfirm={importData} onCancel={() => setShowImport(false)} />
+      )}
     </div>
   );
 }

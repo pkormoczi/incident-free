@@ -18,3 +18,36 @@ export const relLogDate = (ts, now) => {
   if (dayDiff === 1) return `tegn. ${hh}:${mm}`;
   return `${dayDiff} napja`;
 };
+
+/* beillesztett/betöltött export-JSON validálása importhoz; elfogadja mind a teljes    */
+/* export alakot ({ exportedAt, config, incidents }), mind a nyers állapotot           */
+/* ({ config, incidents }) — az exportedAt-ot és minden más kulcsot figyelmen kívül    */
+/* hagyja. Sikeres eredmény: { ok: true, data: { config?, incidents } }.               */
+export const parseImport = (text) => {
+  let parsed;
+  try {
+    parsed = JSON.parse(text);
+  } catch {
+    return { ok: false, error: "A szöveg nem érvényes JSON." };
+  }
+
+  if (typeof parsed !== "object" || parsed === null || Array.isArray(parsed)) {
+    return { ok: false, error: "Ismeretlen adatformátum." };
+  }
+
+  if (!Array.isArray(parsed.incidents)) {
+    return { ok: false, error: "Hiányzik vagy hibás az 'incidents' lista." };
+  }
+  const incidents = parsed.incidents.filter((i) => typeof i === "object" && i !== null);
+
+  let config;
+  if (parsed.config !== undefined) {
+    const c = parsed.config;
+    if (typeof c !== "object" || c === null || typeof c.start !== "string" || typeof c.end !== "string") {
+      return { ok: false, error: "Hibás 'config' (Első/Utolsó nap)." };
+    }
+    config = { start: c.start, end: c.end };
+  }
+
+  return { ok: true, data: { config, incidents } };
+};

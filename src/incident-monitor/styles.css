@@ -592,6 +592,22 @@
   cursor: not-allowed;
 }
 
+.sm-import-textarea {
+  width: 100%;
+  box-sizing: border-box;
+  min-height: 140px;
+  resize: vertical;
+  font-family: var(--sm-font-mono);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.sm-import-file {
+  display: inline-block;
+  margin-bottom: 12px;
+  cursor: pointer;
+}
+
 /* ------------------------------------------------------------------ */
 /*  megosztott interakciós elemek (gomb / input)                       */
 /* ------------------------------------------------------------------ */
