@@ -9,7 +9,7 @@ export function IncidentForm({ onLog }) {
         {TYPES.map((t) => (
           <button
             key={t.id}
-            className={`sm-btn sm-type-btn${t.id === "prod" ? " is-critical" : ""}`}
+            className={`sm-btn sm-type-btn${t.id === "prod" || t.id === "decision"  ? " is-critical" : ""}`}
             onClick={() => onLog(t.id)}
           >
             {t.pick}
