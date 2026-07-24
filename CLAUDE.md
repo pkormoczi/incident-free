@@ -6,10 +6,14 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 A single-page React app: a "days since last work interruption" tracker, styled as a
 horror-flavored "kill list" board (design direction `3a` from a Claude-generated design doc —
-see `Szabadsag Tracker Iranyok - Standalone.html` in the repo root, a bundled Claude Artifact
-export containing several rejected directions plus the chosen one). All UI copy is in
-Hungarian. There is no backend — it's a static Vite/React build with client-side persistence
-only.
+originally `Szabadsag Tracker Iranyok - Standalone.html` in the repo root, a bundled Claude
+Artifact export containing several rejected directions plus the chosen one; superseded by
+`Incident-Monitor - Standalone.html`, a later export of the same direction with a refined
+palette and three decorative images — the large skull next to the counter, the blood-moon/
+forest heatmap background, and the small skull icon in the stats grid). Both exports are
+gitignored (large, one-off bundles, not app source) — treat the live component tree below as
+the source of truth for current styling, not the HTML exports. All UI copy is in Hungarian.
+There is no backend — it's a static Vite/React build with client-side persistence only.
 
 ## Commands
 
@@ -18,10 +22,17 @@ npm run dev       # start Vite dev server with HMR
 npm run build     # production build to dist/
 npm run preview   # serve the production build locally
 npm run lint      # oxlint (see .oxlintrc.json — react + oxc plugins)
+npm run verify    # Playwright smoke test, see below
 ```
 
-There is no test suite/framework configured in this repo. Verification is build + lint +
-driving the app in an actual (headless) browser.
+There is no assertion-based test suite/framework in this repo. `npm run verify`
+(`scripts/verify-visual.mjs`) is a standalone Playwright script — not `@playwright/test`, no
+runner/reporter — that boots Vite's dev server in-process (`createServer`/`server.listen()`,
+so there's no child process to leak or clean up), drives headless Chromium through the
+first-run intro modal and one tap-to-log round trip, fails on any console error, and saves
+screenshots to `verify-shots/` (gitignored) for manual visual review. It is **not** wired into
+CI — `.github/workflows/deploy.yml` only lints and builds; run `npm run verify` manually after
+UI/styling changes.
 
 `.github/workflows/deploy.yml` lints, builds, and deploys `dist/` to GitHub Pages on every
 push to `main` (GitHub Actions as the Pages build source — no `gh-pages` branch involved).
@@ -68,15 +79,26 @@ which is decomposed into layers under `src/incident-monitor/`:
   → `IncidentLog` (separated by `.sm-divider`s) — matching the design's "one continuous
   panel" layout rather than separately-boxed sections.
 - `styles.css` — all styling lives here as `:root` CSS custom properties (`--sm-*`, the
-  horror palette: `--sm-void`/`--sm-card` backgrounds, `--sm-blood`/`--sm-blood-dark` red
-  accents, `--sm-bone` text, `--sm-line*` dashed borders) plus one class per element.
-  Components only ever set `className`; dynamic/data-driven styling (progress width, heatmap
-  cell severity, the type-grid's critical/PROD variant) is expressed as class-name variants,
-  not inline styles, so a future re-skin only has to touch this file + component markup, not
-  the hooks/logic layer.
+  horror palette: `--sm-void`/`--sm-panel`/`--sm-card` backgrounds, `--sm-blood`/
+  `--sm-blood-bright`/`--sm-blood-fire`/`--sm-blood-dark`/`--sm-ember`/`--sm-brick`/`--sm-rose`
+  red/ember accents, `--sm-bone`/`--sm-ash`/`--sm-muted` text, `--sm-line*` dashed borders,
+  `--sm-focus` for the focus outline) plus one class per element. Components only ever set
+  `className`; dynamic/data-driven styling (progress width, heatmap cell severity, the
+  type-grid's critical/PROD variant) is expressed as class-name variants, not inline styles,
+  so a future re-skin only has to touch this file + component markup, not the hooks/logic
+  layer.
+- `assets/` (under `src/incident-monitor/`, **not** the top-level `src/assets/` scaffolding
+  mentioned below) — the three decorative WebP images pulled from the design doc:
+  `skull-large.webp` (CounterBoard, absolutely positioned in the card's top-right corner via
+  `.sm-board-skull`), `nightmap.webp` (Heatmap's `.sm-heatmap-frame` background, with the
+  severity cells in `.sm-cell--warn`/`--alarm` given partial transparency so the image still
+  reads through), and `skull-small.webp` (StatsGrid's wide/accent "fő elkövető" tile, via the
+  `Stat` component's `icon` prop). All three are decorative (`aria-hidden`, `pointer-events:
+  none` where applicable) and were extracted + recompressed from the raw PNGs embedded in the
+  design doc export (~1.8 MB raw → ~200 KB total as WebP).
 
-`App.jsx`, `App.css`, `index.css`, and the `assets/{react.svg,vite.svg,hero.png}` files are
-leftover `npm create vite@latest` scaffolding, **not imported by the running app** —
+`App.jsx`, `App.css`, `index.css`, and the top-level `src/assets/{react.svg,vite.svg,hero.png}`
+files are leftover `npm create vite@latest` scaffolding, **not imported by the running app** —
 `index.css` isn't imported anywhere, and `App.jsx`/`App.css` only import each other. Don't
 assume changes to those files affect the live app; when in doubt, trace imports from
 `index.html` → `src/main.jsx`.

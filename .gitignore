@@ -12,6 +12,9 @@ dist
 dist-ssr
 *.local
 
+# npm run verify output (Playwright smoke-test screenshots)
+verify-shots
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
@@ -26,3 +29,4 @@ Thumbs.db
 
 # Design doc exports (large, one-off Claude Artifact bundles — not app source)
 Szabadsag Tracker Iranyok - Standalone.html
+Incident-Monitor - Standalone.html
