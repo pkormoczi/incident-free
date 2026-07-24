@@ -4,6 +4,7 @@ import { KEY, TYPES, DEFAULT_STATE } from "./constants.js";
 import { todayISO } from "./utils.js";
 import { usePersistentState } from "./hooks/usePersistentState.js";
 import { useNow } from "./hooks/useNow.js";
+import { useTheme } from "./hooks/useTheme.js";
 import { useMonitorStats } from "./hooks/useMonitorStats.js";
 import { Header } from "./components/Header.jsx";
 import { SettingsPanel } from "./components/SettingsPanel.jsx";
@@ -23,6 +24,7 @@ import { ImportModal } from "./components/ImportModal.jsx";
 export default function IncidentMonitor() {
   const [state, setState, { loaded, storageOk, hasSavedData }] = usePersistentState(KEY, DEFAULT_STATE);
   const now = useNow();
+  const [theme, toggleTheme] = useTheme();
 
   const [flash, setFlash] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
@@ -131,6 +133,8 @@ export default function IncidentMonitor() {
           onExport={exportData}
           onImport={() => setShowImport(true)}
           onCopy={copyData}
+          theme={theme}
+          onToggleTheme={toggleTheme}
         />
 
         {showSettings && (

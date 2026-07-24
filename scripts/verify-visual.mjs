@@ -56,6 +56,21 @@ try {
   await page.waitForSelector(".sm-kill-row", { timeout: 5000 });
   await page.screenshot({ path: path.join(shotsDir, "06-after-log.png"), fullPage: true });
 
+  // Light mode: toggle via the header button, re-shoot the same views.
+  await page.locator("button", { hasText: /^(VILÁGOS|SÖTÉT)$/ }).click();
+  await page.waitForFunction(() => document.documentElement.dataset.theme === "light", { timeout: 3000 });
+  await page.waitForTimeout(200);
+  await page.screenshot({ path: path.join(shotsDir, "07-light-full-page.png"), fullPage: true });
+
+  for (const [name, selector] of [
+    ["08-light-counter-board", ".sm-board-section"],
+    ["09-light-heatmap", ".sm-heatmap-section"],
+    ["10-light-stats", ".sm-stats-section"],
+  ]) {
+    const el = page.locator(selector);
+    if (await el.count()) await el.screenshot({ path: path.join(shotsDir, `${name}.png`) });
+  }
+
   await browser.close();
 
   if (consoleErrors.length) {

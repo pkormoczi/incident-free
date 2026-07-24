@@ -5,6 +5,17 @@
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>incident-monitor</title>
+    <script>
+      /* induló téma beállítása a React előtt, hogy ne villanjon a rossz téma */
+      (function () {
+        try {
+          var t = localStorage.getItem("incident-monitor:theme");
+          document.documentElement.dataset.theme = t === "light" || t === "dark" ? t : "dark";
+        } catch {
+          document.documentElement.dataset.theme = "dark";
+        }
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>
