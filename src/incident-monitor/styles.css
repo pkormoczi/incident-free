@@ -317,6 +317,8 @@
 }
 
 .sm-stat {
+  position: relative;
+  overflow: hidden;
   border: 1px dashed var(--sm-line);
   border-radius: 3px;
   padding: 14px 10px;
@@ -327,20 +329,26 @@
   font-family: var(--sm-font-display);
   font-size: 22px;
   color: var(--sm-bone);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
+  position: relative;
+  z-index: 1;
 }
 
 .sm-stat-skull {
-  height: 24px;
+  position: absolute;
+  top: 50%;
+  right: 8px;
+  transform: translateY(-50%);
+  height: 34px;
   width: auto;
   object-fit: contain;
-  opacity: .9;
+  opacity: .55;
+  pointer-events: none;
+  z-index: 0;
 }
 
 .sm-stat-label {
+  position: relative;
+  z-index: 1;
   font-family: var(--sm-font-mono);
   font-size: 10px;
   letter-spacing: 1px;

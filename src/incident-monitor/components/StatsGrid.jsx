@@ -3,10 +3,8 @@ import skullSmall from "../assets/skull-small.webp";
 function Stat({ label, value, wide, accent, icon }) {
   return (
     <div className={`sm-stat${wide ? " sm-stat--wide" : ""}${accent ? " sm-stat--accent" : ""}`}>
-      <div className="sm-stat-value">
-        {icon && <img className="sm-stat-skull" src={icon} alt="" aria-hidden="true" />}
-        {value}
-      </div>
+      {icon && <img className="sm-stat-skull" src={icon} alt="" aria-hidden="true" />}
+      <div className="sm-stat-value">{value}</div>
       <div className="sm-stat-label">{label}</div>
     </div>
   );
