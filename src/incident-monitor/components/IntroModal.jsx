@@ -22,7 +22,7 @@ export function IntroModal({ onConfirm }) {
     <div className="sm-modal-backdrop">
       <div className="sm-modal" role="dialog" aria-modal="true">
         <form onSubmit={submit}>
-          <div className="sm-modal-title">Mikor tart a szabi?</div>
+          <div className="sm-modal-title">Mettől meddig tart a szabi?</div>
 
           <label className="sm-modal-field">
             Első nap

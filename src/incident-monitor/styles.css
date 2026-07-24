@@ -1,6 +1,8 @@
 @import url('https://fonts.googleapis.com/css2?family=Archivo+Black&family=Barlow+Condensed:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;600&display=swap');
 
 :root {
+  color-scheme: dark;
+
   --sm-void: #0a0706;
   --sm-panel: #0d0908;
   --sm-card: #140b0a;
