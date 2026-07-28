@@ -70,17 +70,21 @@ which is decomposed into layers under `src/incident-monitor/`:
 - `hooks/useMonitorStats.js` — all derived data via `useMemo`: current streak, all-time
   record streak, per-day heatmap buckets (`dayBuckets`), `offenders` (who causes the most
   interruptions — also feeds the `<datalist>` autocomplete used in the KILL LIST inline
-  editor), `topType` (most frequent interruption type, by count), weekly average. There is
-  **no verdict/judgment tier** — the chosen design direction explicitly drops that ("jump
-  scare és verdikt-sor nélkül").
+  editor), `topType` (most frequent interruption type, by count), `perWeek` ("heti átlag" —
+  incidents in the configured window so far, divided by the number of *started* weeks
+  (`Math.ceil(elapsedDays / 7)`); deliberately not an extrapolated rate, so one incident on
+  day 2 reads `1.0/hét`, not a projected `3.5/hét`). There is **no verdict/judgment tier** —
+  the chosen design direction explicitly drops that ("jump scare és verdikt-sor nélkül").
 - `components/*.jsx` — presentational, prop-driven, one per section: `Header`,
   `SettingsPanel` (date-range config), `CounterBoard` (the big streak number + embeds
   `ProgressBar`), `IncidentForm` (the "Elkövetés módja" type grid — **tap-to-log**: clicking
   a type button immediately logs an incident with that type's default minutes, no separate
-  submit step), `StatsGrid`, `Heatmap` ("42 ÉJSZAKA"), `IncidentLog` (the "KILL LIST" —
-  shows the 3 most recent entries collapsed with a "+N korábbi bejegyzés" expander; clicking
-  a row opens an inline editor to set `who`/`min`/`note` after the fact, since tap-to-log
-  doesn't collect those up front).
+  submit step), `StatsGrid` (its internal `Stat` component takes an optional `unit` prop,
+  rendered as a smaller, muted `.sm-stat-unit` span after the value — e.g. `" ó"` on total
+  lost time, `"/hét"` on the weekly average), `Heatmap` ("42 ÉJSZAKA"), `IncidentLog` (the
+  "KILL LIST" — shows the 3 most recent entries collapsed with a "+N korábbi bejegyzés"
+  expander; clicking a row opens an inline editor to set `who`/`min`/`note` after the fact,
+  since tap-to-log doesn't collect those up front).
 - `index.jsx` — thin container: wires the hooks, holds only UI-local state (`flash`,
   `showSettings`), defines actions (`log(typeId)`, `updateIncident(id, patch)`, `remove`,
   `resetAll`, `setStart`/`setEnd`), and renders `Header` + `SettingsPanel` outside a single

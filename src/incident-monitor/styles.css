@@ -414,6 +414,11 @@
   z-index: 1;
 }
 
+.sm-stat-unit {
+  font-size: 11px;
+  color: var(--sm-muted);
+}
+
 .sm-stat-skull {
   position: absolute;
   top: 50%;

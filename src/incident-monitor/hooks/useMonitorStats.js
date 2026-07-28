@@ -51,7 +51,13 @@ export function useMonitorStats(state, now) {
     return t ? t.short : entries[0][0];
   }, [state.incidents]);
 
-  const perWeek = elapsedDays > 0 ? (state.incidents.length / elapsedDays) * 7 : 0;
+  /* csak az eltelt, időszakon belüli napok incidensei — ugyanaz az ablak, amit a naptérkép */
+  /* és a "tiszta nap" használ, hogy a számok ne mondjanak ellent egymásnak                  */
+  const windowedCount = dayBuckets.slice(0, elapsedDays).reduce((a, d) => a + d.n, 0);
+
+  /* megkezdett hetekre vetített átlag, nem extrapolált ütem — egyetlen incidens az első   */
+  /* héten belül nem ugrik meg a hétszeresére                                              */
+  const perWeek = elapsedDays > 0 ? windowedCount / Math.ceil(elapsedDays / 7) : 0;
 
   const digits = String(sinceDays).padStart(2, "0");
 
