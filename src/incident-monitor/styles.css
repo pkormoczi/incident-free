@@ -551,6 +551,13 @@
 
 .sm-kill-edit-input { flex: 1 1 100px; }
 .sm-kill-edit-mins { flex: 0 1 70px; }
+.sm-kill-edit-ts { flex: 1 1 175px; }
+
+.sm-kill-edit-error {
+  flex: 1 0 100%;
+  color: var(--sm-blood);
+  font-size: 12px;
+}
 
 .sm-kill-save {
   background: var(--sm-blood-dark);
@@ -560,6 +567,11 @@
   border-radius: 2px;
   font-size: 13px;
   cursor: pointer;
+}
+
+.sm-kill-save:disabled {
+  opacity: .45;
+  cursor: not-allowed;
 }
 
 .sm-kill-remove {

@@ -9,14 +9,34 @@ export const startOfDay = (ms) => { const d = new Date(ms); d.setHours(0, 0, 0, 
 export const fmtDate = (ms) =>
   new Date(ms).toLocaleString("hu-HU", { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" });
 
-/* "ma 09:12" / "tegn. 16:40" / "3 napja" — a KILL LIST relatív időbélyege */
+const pad = (n) => String(n).padStart(2, "0");
+
+/* "ma 09:12" / "tegn. 16:40" / "júl. 22. 14:30" — a KILL LIST relatív időbélyege. A         */
+/* dayDiff === 0 (nem <= 0), mert a szerkesztőben mostantól jövőbeli nap is választható      */
+/* (a szabi jellemzően a jövőbe nyúlik) — egy jövőbeli időpontot nem szabad "ma"-ként írni.  */
 export const relLogDate = (ts, now) => {
   const dayDiff = Math.round((startOfDay(now) - startOfDay(ts)) / DAY);
-  const hh = String(new Date(ts).getHours()).padStart(2, "0");
-  const mm = String(new Date(ts).getMinutes()).padStart(2, "0");
-  if (dayDiff <= 0) return `ma ${hh}:${mm}`;
+  const hh = pad(new Date(ts).getHours());
+  const mm = pad(new Date(ts).getMinutes());
+  if (dayDiff === 0) return `ma ${hh}:${mm}`;
   if (dayDiff === 1) return `tegn. ${hh}:${mm}`;
-  return `${dayDiff} napja`;
+  return fmtDate(ts);
+};
+
+/* helyi idejű határ a <input type="datetime-local"> mezőhöz — NEM a JSON export/import     */
+/* UTC ISO-8601 határa (ld. tsToISO/validateImport lejjebb). A datetime-local mindig helyi   */
+/* időt vár/ad időzóna-jelző nélkül, ahogy az app minden más napszámítása is helyi idővel    */
+/* megy (startOfDay, config.start/end parse a hookban) — ezért itt nem toISOString().        */
+export const tsToLocalInput = (ms) => {
+  const d = new Date(ms);
+  if (Number.isNaN(d.getTime())) return "";
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+};
+
+export const localInputToTs = (v) => {
+  if (typeof v !== "string" || v === "") return null;
+  const ms = new Date(v).getTime();
+  return Number.isNaN(ms) ? null : ms;
 };
 
 /* JSON-határ: kifelé ISO-8601 szöveg (mint az exportedAt), befelé epoch ms. Minden        */

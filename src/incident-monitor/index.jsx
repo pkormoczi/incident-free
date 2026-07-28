@@ -219,7 +219,14 @@ export default function IncidentMonitor() {
 
           <div className="sm-divider" />
 
-          <IncidentLog incidents={incidents} now={now} onUpdate={updateIncident} onRemove={remove} />
+          <IncidentLog
+            incidents={incidents}
+            now={now}
+            start={state.config.start}
+            end={state.config.end}
+            onUpdate={updateIncident}
+            onRemove={remove}
+          />
         </div>
 
         {!storageOk && (

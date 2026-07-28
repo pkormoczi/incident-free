@@ -29,8 +29,9 @@ There is no assertion-based test suite/framework in this repo. `npm run verify`
 (`scripts/verify-visual.mjs`) is a standalone Playwright script — not `@playwright/test`, no
 runner/reporter — that boots Vite's dev server in-process (`createServer`/`server.listen()`,
 so there's no child process to leak or clean up), drives headless Chromium through the
-first-run intro modal and one tap-to-log round trip, fails on any console error, and saves
-screenshots to `verify-shots/` (gitignored) for manual visual review. It is **not** wired into
+first-run intro modal, one tap-to-log round trip, and a KILL LIST inline `ts` edit, fails on
+any console error, and saves screenshots to `verify-shots/` (gitignored) for manual visual
+review. It is **not** wired into
 CI — `.github/workflows/deploy.yml` only lints and builds; run `npm run verify` manually after
 UI/styling changes.
 
@@ -50,16 +51,22 @@ which is decomposed into layers under `src/incident-monitor/`:
   (compact label used in the KILL LIST / "fő fegyvernem" stat, e.g. `"PROD"`), `min` (default
   minutes logged). Extend this array to add a new interruption type.
 - `utils.js` — pure date/format helpers (`todayISO`, `addDays`, `startOfDay`, `fmtDate`,
-  `relLogDate`, which renders a KILL LIST timestamp as `"ma HH:MM"` / `"tegn. HH:MM"` /
-  `"N napja"`) plus the JSON boundary: `validateImport`/`parseImport` inbound, `tsToISO`
-  outbound. **Timestamp contract:** an incident's `ts` is epoch-ms *inside* the app (React
-  state and the `localStorage` blob — all date math is numeric) but an ISO-8601 string *in
-  JSON* (export output, import input, `public/me.json`), matching the top-level `exportedAt`.
-  Conversion happens only at the two choke points: `buildExport` in `index.jsx` (ms→ISO) and
+  `relLogDate`, which renders a KILL LIST timestamp as `"ma HH:MM"` / `"tegn. HH:MM"` / a
+  `fmtDate` fallback like `"júl. 22. 14:30"` for anything older — or in the future, since the
+  KILL LIST row editor now allows setting a `ts` anywhere in the configured period) plus the
+  JSON boundary: `validateImport`/`parseImport` inbound, `tsToISO` outbound. **Timestamp
+  contract:** an incident's `ts` is epoch-ms *inside* the app (React state and the
+  `localStorage` blob — all date math is numeric) but an ISO-8601 string *in JSON* (export
+  output, import input, `public/me.json`), matching the top-level `exportedAt`. Conversion
+  happens only at the two choke points: `buildExport` in `index.jsx` (ms→ISO) and
   `validateImport` (ISO→ms). Import accepts ISO only — a numeric `ts` is rejected with an
   error rather than migrated, so exports predating this change cannot be re-imported.
   `localStorage` is read back raw (`usePersistentState` does an unvalidated `JSON.parse`,
   never through `validateImport`), which is why the persisted form must stay numeric.
+  Separately, `tsToLocalInput`/`localInputToTs` convert ms ↔ the *local*-time string a
+  `<input type="datetime-local">` reads/writes (no timezone suffix) — this is a different
+  boundary from the JSON one above (local time, not UTC ISO), used only by `IncidentLog`'s
+  inline row editor.
 - `hooks/usePersistentState.js` — round-trips state through `window.storage.get/set` under
   key `incident-monitor:v1`. `window.storage` is not a browser API — it's polyfilled in
   `src/storage-shim.js` (imported for its side effect in `main.jsx`, before the component
@@ -79,7 +86,11 @@ which is decomposed into layers under `src/incident-monitor/`:
   moment the window is widened to include them — they're just invisible everywhere in this
   read layer, including the KILL LIST and the `offenders`-fed `<datalist>` autocomplete in
   `LogModal` (the pre-log editor shown when tapping a type, not the KILL LIST's own inline
-  row editor — that one is a plain, non-autocompleting `<input>`). The write paths
+  row editor — that one has plain, non-autocompleting `<input>`s for `who`/`min`/`note`, plus
+  a `<input type="datetime-local">` for `ts`, bounded by `min`/`max` attributes tied to the
+  same Első/Utolsó nap config — editing a row's `ts` to a value outside that range disables
+  Save with an inline error rather than silently producing an entry that would vanish from
+  every filtered view on save). The write paths
   (`confirmLog`/`updateIncident`/`remove`/`importData`/`buildExport` in `index.jsx`)
   intentionally keep operating on the raw, unfiltered `state.incidents` — export/import is
   a full backup mechanism, not a mirror of the current view; `incidentCount` for the stat
@@ -97,8 +108,11 @@ which is decomposed into layers under `src/incident-monitor/`:
   rendered as a smaller, muted `.sm-stat-unit` span after the value — e.g. `" ó"` on total
   lost time, `"/hét"` on the weekly average), `Heatmap` ("42 ÉJSZAKA"), `IncidentLog` (the
   "KILL LIST" — shows the 3 most recent entries collapsed with a "+N korábbi bejegyzés"
-  expander; clicking a row opens an inline editor to set `who`/`min`/`note` after the fact,
-  since tap-to-log doesn't collect those up front).
+  expander; clicking a row opens an inline editor to set `who`/`min`/`note`/`ts` after the
+  fact, since tap-to-log doesn't collect those up front — `ts` via a native `datetime-local`
+  picker, min/max-clamped to the configured period; leaving it untouched keeps the incident's
+  original ms exactly, since Save only includes `ts` in the patch when the field's value
+  differs from the incident's current one).
 - `index.jsx` — thin container: wires the hooks, holds only UI-local state (`flash`,
   `showSettings`), defines actions (`log(typeId)`, `updateIncident(id, patch)`, `remove`,
   `resetAll`, `setStart`/`setEnd`), and renders `Header` + `SettingsPanel` outside a single

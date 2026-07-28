@@ -64,6 +64,14 @@ try {
   await page.waitForSelector(".sm-kill-row", { timeout: 5000 });
   await page.screenshot({ path: path.join(shotsDir, "06-after-log.png"), fullPage: true });
 
+  // KILL LIST inline edit: opening a row exposes a datetime-local field alongside who/min/note.
+  await page.locator(".sm-kill-row").first().click();
+  await page.waitForSelector(".sm-kill-edit-ts", { timeout: 5000 });
+  await page.locator(".sm-kill-edit-ts").fill(isoDate(Date.now() - DAY) + "T09:30");
+  await page.locator(".sm-kill-save").click();
+  await page.waitForSelector(".sm-kill-row--editing", { state: "detached", timeout: 5000 });
+  await page.screenshot({ path: path.join(shotsDir, "06b-after-ts-edit.png"), fullPage: true });
+
   // Light mode: toggle via the header button, re-shoot the same views.
   await page.locator("button", { hasText: /^(VILÁGOS|SÖTÉT)$/ }).click();
   await page.waitForFunction(() => document.documentElement.dataset.theme === "light", { timeout: 3000 });
