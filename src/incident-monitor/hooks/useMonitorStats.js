@@ -25,7 +25,9 @@ export function useMonitorStats(state, now) {
   const incidents = useMemo(() => [...windowedIncidents].sort((a, b) => b.ts - a.ts), [windowedIncidents]);
 
   const lastTs = incidents.length ? incidents[0].ts : startMs;
-  const since = Math.max(0, now - lastTs);
+  /* a "record" már most is min(now, endMs)-re szorítja a rést — a fejszámláló ugyanígy   */
+  /* lefagy az Utolsó nap után, nem ketyeg tovább egy már lezárult időszaknál             */
+  const since = Math.max(0, Math.min(now, endMs) - lastTs);
   const sinceDays = Math.floor(since / DAY);
   const h = Math.floor((since % DAY) / 3600000);
   const m = Math.floor((since % 3600000) / 60000);

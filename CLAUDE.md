@@ -70,8 +70,9 @@ which is decomposed into layers under `src/incident-monitor/`:
 - `hooks/useMonitorStats.js` — all derived data via `useMemo`, computed from a single
   `windowedIncidents` filter (incidents whose `ts` falls within the configured
   Első/Utolsó nap, day-granular, inclusive both ends) — every returned value (`incidents`,
-  i.e. the KILL LIST; the current streak; the record streak, which is therefore the
-  longest gap *within the configured period*, not an all-time record; `lostMin`;
+  i.e. the KILL LIST; the current streak, which — like the record streak — freezes at
+  `min(now, endMs)` rather than counting past a finished period; the record streak, which
+  is therefore the longest gap *within the configured period*, not an all-time record; `lostMin`;
   `dayBuckets`; `offenders`; `topType`; `perWeek`) is derived from that one filtered array,
   so none of them can disagree with another over what counts. Incidents outside the
   configured window are never deleted — they stay in `state`/localStorage and reappear the
