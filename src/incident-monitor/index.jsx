@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import "./styles.css";
 import { KEY, TYPES, DEFAULT_STATE } from "./constants.js";
-import { todayISO, validateImport } from "./utils.js";
+import { todayISO, tsToISO, validateImport } from "./utils.js";
 import { getContext } from "./context.js";
 import { usePersistentState } from "./hooks/usePersistentState.js";
 import { useNow } from "./hooks/useNow.js";
@@ -54,6 +54,9 @@ export default function IncidentMonitor() {
         const r = validateImport(await res.json());
         if (r.ok) {
           setState((p) => ({ ...p, config: r.data.config ?? p.config, incidents: r.data.incidents }));
+        } else {
+          /* a me.json mérvadó — hibás tartalomnál ne csak némán az alapállapot maradjon */
+          console.warn("me.json:", r.error);
         }
       } catch {
         /* marad az alapállapot */
@@ -109,8 +112,13 @@ export default function IncidentMonitor() {
     setIntroDone(true);
   };
 
+  /* kifelé ISO-8601 időbélyeg (mint az exportedAt) — belül marad az epoch ms */
   const buildExport = () => JSON.stringify(
-    { exportedAt: new Date().toISOString(), config: state.config, incidents: state.incidents },
+    {
+      exportedAt: new Date().toISOString(),
+      config: state.config,
+      incidents: state.incidents.map((i) => ({ ...i, ts: tsToISO(i.ts) })),
+    },
     null,
     2,
   );

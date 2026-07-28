@@ -49,8 +49,17 @@ which is decomposed into layers under `src/incident-monitor/`:
   (legacy, unused for display), `pick` (type-grid button text, e.g. `"a PROD"`), `short`
   (compact label used in the KILL LIST / "fő fegyvernem" stat, e.g. `"PROD"`), `min` (default
   minutes logged). Extend this array to add a new interruption type.
-- `utils.js` — pure date/format helpers: `todayISO`, `addDays`, `startOfDay`, `fmtDate`,
-  `relLogDate` (renders a KILL LIST timestamp as `"ma HH:MM"` / `"tegn. HH:MM"` / `"N napja"`).
+- `utils.js` — pure date/format helpers (`todayISO`, `addDays`, `startOfDay`, `fmtDate`,
+  `relLogDate`, which renders a KILL LIST timestamp as `"ma HH:MM"` / `"tegn. HH:MM"` /
+  `"N napja"`) plus the JSON boundary: `validateImport`/`parseImport` inbound, `tsToISO`
+  outbound. **Timestamp contract:** an incident's `ts` is epoch-ms *inside* the app (React
+  state and the `localStorage` blob — all date math is numeric) but an ISO-8601 string *in
+  JSON* (export output, import input, `public/me.json`), matching the top-level `exportedAt`.
+  Conversion happens only at the two choke points: `buildExport` in `index.jsx` (ms→ISO) and
+  `validateImport` (ISO→ms). Import accepts ISO only — a numeric `ts` is rejected with an
+  error rather than migrated, so exports predating this change cannot be re-imported.
+  `localStorage` is read back raw (`usePersistentState` does an unvalidated `JSON.parse`,
+  never through `validateImport`), which is why the persisted form must stay numeric.
 - `hooks/usePersistentState.js` — round-trips state through `window.storage.get/set` under
   key `incident-monitor:v1`. `window.storage` is not a browser API — it's polyfilled in
   `src/storage-shim.js` (imported for its side effect in `main.jsx`, before the component

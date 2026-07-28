@@ -19,10 +19,27 @@ export const relLogDate = (ts, now) => {
   return `${dayDiff} napja`;
 };
 
+/* JSON-határ: kifelé ISO-8601 szöveg (mint az exportedAt), befelé epoch ms. Minden        */
+/* dátumszámítás (rendezés, streak, naptérkép) számmal megy, ezért az átváltás csak az     */
+/* export/import két pontján történik — az állapot és a localStorage tartalma végig ms.    */
+export const tsToISO = (ms) => {
+  const d = new Date(ms);
+  return Number.isNaN(d.getTime()) ? null : d.toISOString();
+};
+
+/* ISO-8601 szöveg → epoch ms; minden másra null. A typeof nem díszítés: a Date.parse      */
+/* stringgé alakítaná az argumentumot, így pl. egy ["2026-...Z"] tömb is átmenne rajta.     */
+const tsFromISO = (v) => {
+  if (typeof v !== "string") return null;
+  const ms = Date.parse(v);
+  return Number.isNaN(ms) ? null : ms;
+};
+
 /* egy már JSON.parse-olt objektum alak-validálása; elfogadja mind a teljes export     */
 /* alakot ({ exportedAt, config, incidents }), mind a nyers állapotot                  */
 /* ({ config, incidents }) — az exportedAt-ot és minden más kulcsot figyelmen kívül    */
-/* hagyja. Sikeres eredmény: { ok: true, data: { config?, incidents } }.               */
+/* hagyja. A visszaadott incidents 'ts' mezője már epoch ms — a JSON-ban ISO-8601      */
+/* szöveg. Sikeres eredmény: { ok: true, data: { config?, incidents } }.               */
 export const validateImport = (parsed) => {
   if (typeof parsed !== "object" || parsed === null || Array.isArray(parsed)) {
     return { ok: false, error: "Ismeretlen adatformátum." };
@@ -31,7 +48,17 @@ export const validateImport = (parsed) => {
   if (!Array.isArray(parsed.incidents)) {
     return { ok: false, error: "Hiányzik vagy hibás az 'incidents' lista." };
   }
-  const incidents = parsed.incidents.filter((i) => typeof i === "object" && i !== null);
+  /* egyetlen hibás 'ts' az egész importot elutasítja: az import teljes cserét jelent, */
+  /* a hibás bejegyzés csendes eldobása némán adatot veszítene                         */
+  const incidents = [];
+  for (const i of parsed.incidents) {
+    if (typeof i !== "object" || i === null) continue;
+    const ts = tsFromISO(i.ts);
+    if (ts === null) {
+      return { ok: false, error: "Hibás 'ts' időbélyeg — ISO-8601 szöveg kell (pl. „2026-07-27T10:54:00.000Z”), nem szám." };
+    }
+    incidents.push({ ...i, ts });
+  }
 
   let config;
   if (parsed.config !== undefined) {
