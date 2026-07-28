@@ -118,6 +118,14 @@
   margin: 0 auto;
 }
 
+.sm-loading {
+  padding: 80px 0;
+  text-align: center;
+  color: var(--sm-muted);
+  font-family: var(--sm-font-display);
+  letter-spacing: 0.04em;
+}
+
 /* ------------------------------------------------------------------ */
 /*  fejléc + haladás                                                   */
 /* ------------------------------------------------------------------ */
