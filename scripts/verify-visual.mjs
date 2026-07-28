@@ -4,6 +4,14 @@ import { fileURLToPath } from "node:url";
 import { createServer } from "vite";
 import { chromium } from "playwright";
 
+/* minden statisztika (és a KILL LIST) csak a beállított Első/Utolsó nap közé eső        */
+/* bejegyzéseket látja (ld. useMonitorStats.js) — az intro modal dátumait ezért a mai     */
+/* naphoz KÉPEST kell megadni, nem fix naptári dátummal, különben a tap-to-log bejegyzés  */
+/* egy nap egyszer csak kikerül a beállított ablakból, és a ".sm-kill-row" várakozás       */
+/* timeoutol                                                                              */
+const DAY = 86400000;
+const isoDate = (ms) => new Date(ms).toISOString().slice(0, 10);
+
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(__dirname, "..");
 const shotsDir = path.join(repoRoot, "verify-shots");
@@ -28,8 +36,8 @@ try {
   // First-run intro modal requires start/end dates before "Indulhat" enables.
   if (await page.locator(".sm-modal-backdrop").count()) {
     const dateInputs = page.locator(".sm-modal input[type='date']");
-    await dateInputs.nth(0).fill("2026-07-01");
-    await dateInputs.nth(1).fill("2026-08-15");
+    await dateInputs.nth(0).fill(isoDate(Date.now() - 7 * DAY));
+    await dateInputs.nth(1).fill(isoDate(Date.now() + 34 * DAY));
     await page.locator(".sm-modal-confirm").click();
     await page.waitForSelector(".sm-modal-backdrop", { state: "detached", timeout: 5000 });
   }

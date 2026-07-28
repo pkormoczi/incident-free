@@ -100,7 +100,9 @@ export default function IncidentMonitor() {
   }));
 
   const remove = (id) => setState((p) => ({ ...p, incidents: p.incidents.filter((i) => i.id !== id) }));
-  const resetAll = () => { if (confirm("Az egész KILL LIST törlése. Biztos?")) setState((p) => ({ ...p, incidents: [] })); };
+  /* a szöveg a beállított időszakon kívüli, épp nem látszó bejegyzéseket is jelzi —      */
+  /* a törlés a teljes state.incidents-et üríti, nem csak a jelenleg látható KILL LIST-et */
+  const resetAll = () => { if (confirm("Minden rögzített bejegyzés törlése, a beállított időszakon kívüliekkel együtt. Biztos?")) setState((p) => ({ ...p, incidents: [] })); };
 
   const setStart = (start) => setState((p) => ({ ...p, config: { ...p.config, start } }));
   const setEnd = (end) => setState((p) => ({ ...p, config: { ...p.config, end } }));
@@ -203,7 +205,7 @@ export default function IncidentMonitor() {
           <div className="sm-divider" />
 
           <StatsGrid
-            incidentCount={state.incidents.length}
+            incidentCount={incidents.length}
             lostMin={lostMin}
             perWeek={perWeek}
             cleanDays={cleanDays}

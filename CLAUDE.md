@@ -67,14 +67,27 @@ which is decomposed into layers under `src/incident-monitor/`:
   if `window.storage` is missing entirely; the save effect skips the very first render
   (`firstRun` ref) so it doesn't clobber storage with the default state before load completes.
 - `hooks/useNow.js` — 1s `setInterval` tick.
-- `hooks/useMonitorStats.js` — all derived data via `useMemo`: current streak, all-time
-  record streak, per-day heatmap buckets (`dayBuckets`), `offenders` (who causes the most
-  interruptions — also feeds the `<datalist>` autocomplete used in the KILL LIST inline
-  editor), `topType` (most frequent interruption type, by count), `perWeek` ("heti átlag" —
-  incidents in the configured window so far, divided by the number of *started* weeks
+- `hooks/useMonitorStats.js` — all derived data via `useMemo`, computed from a single
+  `windowedIncidents` filter (incidents whose `ts` falls within the configured
+  Első/Utolsó nap, day-granular, inclusive both ends) — every returned value (`incidents`,
+  i.e. the KILL LIST; the current streak; the record streak, which is therefore the
+  longest gap *within the configured period*, not an all-time record; `lostMin`;
+  `dayBuckets`; `offenders`; `topType`; `perWeek`) is derived from that one filtered array,
+  so none of them can disagree with another over what counts. Incidents outside the
+  configured window are never deleted — they stay in `state`/localStorage and reappear the
+  moment the window is widened to include them — they're just invisible everywhere in this
+  read layer, including the KILL LIST and the `offenders`-fed `<datalist>` autocomplete in
+  `LogModal` (the pre-log editor shown when tapping a type, not the KILL LIST's own inline
+  row editor — that one is a plain, non-autocompleting `<input>`). The write paths
+  (`confirmLog`/`updateIncident`/`remove`/`importData`/`buildExport` in `index.jsx`)
+  intentionally keep operating on the raw, unfiltered `state.incidents` — export/import is
+  a full backup mechanism, not a mirror of the current view; `incidentCount` for the stat
+  tile is just `incidents.length` at the `index.jsx` call site, not a separate hook field.
+  `perWeek` ("heti átlag") divides the windowed count by the number of *started* weeks
   (`Math.ceil(elapsedDays / 7)`); deliberately not an extrapolated rate, so one incident on
-  day 2 reads `1.0/hét`, not a projected `3.5/hét`). There is **no verdict/judgment tier** —
-  the chosen design direction explicitly drops that ("jump scare és verdikt-sor nélkül").
+  day 2 reads `1.0/hét`, not a projected `3.5/hét`. There is
+  **no verdict/judgment tier** — the chosen design direction explicitly drops that
+  ("jump scare és verdikt-sor nélkül").
 - `components/*.jsx` — presentational, prop-driven, one per section: `Header`,
   `SettingsPanel` (date-range config), `CounterBoard` (the big streak number + embeds
   `ProgressBar`), `IncidentForm` (the "Elkövetés módja" type grid — **tap-to-log**: clicking
