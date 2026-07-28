@@ -68,7 +68,7 @@ export default function IncidentMonitor() {
 
   const {
     incidents, digits,
-    record, totalDays, elapsedDays, lostMin,
+    record, totalDays, elapsedDays, closedDays, lostMin,
     dayBuckets, offenders, topType, perWeek,
   } = useMonitorStats(state, now);
 
@@ -159,7 +159,7 @@ export default function IncidentMonitor() {
     setIntroDone(true);
   };
 
-  const cleanDays = dayBuckets.slice(0, elapsedDays).filter((d) => d.n === 0).length;
+  const cleanDays = dayBuckets.slice(0, closedDays).filter((d) => d.n === 0).length;
   const topOffender = offenders.length ? offenders[0] : null;
 
   if (!meReady) {
@@ -196,7 +196,7 @@ export default function IncidentMonitor() {
         )}
 
         <div className="sm-card">
-          <CounterBoard flash={flash} digits={digits} record={record} elapsedDays={elapsedDays} totalDays={totalDays} />
+          <CounterBoard flash={flash} digits={digits} record={record} closedDays={closedDays} totalDays={totalDays} />
 
           <div className="sm-divider" />
 

@@ -97,7 +97,14 @@ which is decomposed into layers under `src/incident-monitor/`:
   tile is just `incidents.length` at the `index.jsx` call site, not a separate hook field.
   `perWeek` ("heti átlag") divides the windowed count by the number of *started* weeks
   (`Math.ceil(elapsedDays / 7)`); deliberately not an extrapolated rate, so one incident on
-  day 2 reads `1.0/hét`, not a projected `3.5/hét`. There is
+  day 2 reads `1.0/hét`, not a projected `3.5/hét`. `elapsedDays` is 1-based and counts
+  today as a full day the moment it starts — it drives the `Header` day count, the
+  `Heatmap`'s past/future cell split, and `perWeek`'s denominator, all of which should credit
+  today's (still-open) incidents immediately. `closedDays` is the 0-based count of days that
+  have already ended at midnight — today is never included — and drives the "nap túlélve"
+  caption + progress bar in `CounterBoard` and the `cleanDays` ("tiszta nap") count in
+  `index.jsx`, so a day only counts as survived/clean once it's actually over, not while it's
+  still possible to log an incident against it. There is
   **no verdict/judgment tier** — the chosen design direction explicitly drops that
   ("jump scare és verdikt-sor nélkül").
 - `components/*.jsx` — presentational, prop-driven, one per section: `Header`,

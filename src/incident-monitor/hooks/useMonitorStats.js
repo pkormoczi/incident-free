@@ -13,6 +13,10 @@ export function useMonitorStats(state, now) {
   const endMs = useMemo(() => new Date(state.config.end + "T23:59:59").getTime(), [state.config.end]);
   const totalDays = Math.max(1, Math.round((startOfDay(endMs) - startOfDay(startMs)) / DAY) + 1);
   const elapsedDays = Math.min(totalDays, Math.max(0, Math.floor((now - startMs) / DAY) + 1));
+  /* lezárt nap = éjfélkor véget ért nap. A mai nap még nyitott (jöhet incidens), ezért a mai */
+  /* nap 0-alapú indexe egyben a mögötte lezárult napok száma is — a "nap túlélve" felirat és */
+  /* a "tiszta nap" számláló ezt használja, nem elapsedDays-t (ami a mai napot is beleszámolja)*/
+  const closedDays = Math.min(totalDays, Math.max(0, dayIndex(now, startMs)));
 
   /* a lényeg: csak a beállított Első/Utolsó nap közé eső bejegyzések számítanak — a     */
   /* KILL LIST is ezt mutatja. Az időszakon kívüliek nem törlődnek, csak nem látszanak;  */
@@ -79,7 +83,7 @@ export function useMonitorStats(state, now) {
   return {
     startMs, endMs, incidents,
     sinceDays, h, m, s, digits,
-    record, totalDays, elapsedDays, lostMin,
+    record, totalDays, elapsedDays, closedDays, lostMin,
     dayBuckets, offenders, topType, perWeek,
   };
 }
