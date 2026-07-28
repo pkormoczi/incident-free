@@ -1,8 +1,17 @@
 {
-  "exportedAt": "2026-07-27T09:19:11.251Z",
+  "exportedAt": "2026-07-28T00:42:24.286Z",
   "config": {
     "start": "2026-07-27",
     "end": "2026-09-06"
   },
-  "incidents": []
+  "incidents": [
+    {
+      "id": "n9wjfbox0t",
+      "ts": 1785149640000,
+      "type": "call",
+      "min": 10,
+      "who": "Szügyi Péter",
+      "note": ""
+    }
+  ]
 }
