@@ -23,7 +23,7 @@ export function StatsGrid({ incidentCount, lostMin, perWeek, cleanDays, topOffen
           wide
           accent
           icon={skullSmall}
-          value={topOffender ? `${topOffender[0]} · ${topType ?? "–"}` : "–"}
+          value={incidentCount ? `${topOffender ?? "–"} · ${topType ?? "–"}` : "–"}
           label="fő elkövető · fő fegyvernem"
         />
       </div>

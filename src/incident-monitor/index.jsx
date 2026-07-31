@@ -69,7 +69,7 @@ export default function IncidentMonitor() {
   const {
     incidents, digits,
     record, totalDays, elapsedDays, closedDays, lostMin,
-    dayBuckets, offenders, topType, perWeek,
+    dayBuckets, offenders, topOffender, topType, perWeek,
   } = useMonitorStats(state, now);
 
   /* ---------- actions ---------- */
@@ -160,7 +160,6 @@ export default function IncidentMonitor() {
   };
 
   const cleanDays = dayBuckets.slice(0, closedDays).filter((d) => d.n === 0).length;
-  const topOffender = offenders.length ? offenders[0] : null;
 
   if (!meReady) {
     return (

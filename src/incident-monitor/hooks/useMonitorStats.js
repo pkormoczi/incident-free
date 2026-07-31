@@ -6,6 +6,11 @@ import { startOfDay } from "../utils.js";
 /* definíció, ezt használja az időszakszűrő és a naptérkép is                          */
 const dayIndex = (ts, startMs) => Math.floor((startOfDay(ts) - startOfDay(startMs)) / DAY);
 
+/* holtversenynél nincs győztes: csak akkor van vezető, ha az első szigorúan megelőzi */
+/* a másodikat — ugyanez a szabály a fő elkövetőre és a fő fegyvernemre               */
+const soleLeader = (entries) =>
+  entries.length && (entries.length === 1 || entries[0][1] > entries[1][1]) ? entries[0][0] : null;
+
 /* ---------- minden származtatott adat egy helyen: streak, rekord, ---------- */
 /* ---------- naptérkép, elkövetők, heti átlag, fő fegyvernem         ---------- */
 export function useMonitorStats(state, now) {
@@ -61,13 +66,18 @@ export function useMonitorStats(state, now) {
     return Object.entries(map).sort((a, b) => b[1] - a[1]);
   }, [windowedIncidents]);
 
+  /* egyértelmű vezető csak akkor van, ha az első szigorúan megelőzi a másodikat —      */
+  /* holtversenynél null (a StatsGrid ezt "–"-ként mutatja)                             */
+  const topOffender = useMemo(() => soleLeader(offenders), [offenders]);
+
   const topType = useMemo(() => {
     const map = {};
     windowedIncidents.forEach((i) => { map[i.type] = (map[i.type] || 0) + 1; });
     const entries = Object.entries(map).sort((a, b) => b[1] - a[1]);
-    if (!entries.length) return null;
-    const t = TYPES.find((x) => x.id === entries[0][0]);
-    return t ? t.short : entries[0][0];
+    const winner = soleLeader(entries);
+    if (!winner) return null;
+    const t = TYPES.find((x) => x.id === winner);
+    return t ? t.short : winner;
   }, [windowedIncidents]);
 
   /* csak az eltelt napok incidensei — a dayBuckets már eleve az időszakra szűrt forrásból */
@@ -84,6 +94,6 @@ export function useMonitorStats(state, now) {
     startMs, endMs, incidents,
     sinceDays, h, m, s, digits,
     record, totalDays, elapsedDays, closedDays, lostMin,
-    dayBuckets, offenders, topType, perWeek,
+    dayBuckets, offenders, topOffender, topType, perWeek,
   };
 }

@@ -80,8 +80,14 @@ which is decomposed into layers under `src/incident-monitor/`:
   i.e. the KILL LIST; the current streak, which — like the record streak — freezes at
   `min(now, endMs)` rather than counting past a finished period; the record streak, which
   is therefore the longest gap *within the configured period*, not an all-time record; `lostMin`;
-  `dayBuckets`; `offenders`; `topType`; `perWeek`) is derived from that one filtered array,
-  so none of them can disagree with another over what counts. Incidents outside the
+  `dayBuckets`; `offenders`; `topOffender`; `topType`; `perWeek`) is derived from that one
+  filtered array, so none of them can disagree with another over what counts. `topOffender`
+  (the "fő elkövető" half of the StatsGrid tile) and `topType` (the "fő fegyvernem" half) each
+  go through a shared `soleLeader` helper that returns `null` on a tie — a leader exists only
+  if the top entry's count strictly exceeds the runner-up's, so a 1:1:1:1 split (or a 2:2 top
+  type) renders as `–` for that half instead of an arbitrary winner picked by insertion order.
+  The two halves resolve independently, so one can show a name/type while the other shows `–`.
+  Incidents outside the
   configured window are never deleted — they stay in `state`/localStorage and reappear the
   moment the window is widened to include them — they're just invisible everywhere in this
   read layer, including the KILL LIST and the `offenders`-fed `<datalist>` autocomplete in
