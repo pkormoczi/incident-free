@@ -15,7 +15,7 @@ function LogRow({ incident, now, start, end, onUpdate, onRemove }) {
     return (
       <div className="sm-kill-row" onClick={() => setEditing(true)}>
         <span className="sm-kill-meta">
-          {relLogDate(incident.ts, now)} · {typeShort(incident.type)} · {incident.who || "—"}
+          {relLogDate(incident.ts, now)} · {typeShort(incident.type)} · {incident.who || "—"} · {incident.note ? ` (${incident.note})` : ""}
         </span>
         <span className="sm-kill-min">−{incident.min}p</span>
       </div>
