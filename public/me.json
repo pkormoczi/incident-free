@@ -1,5 +1,5 @@
 {
-  "exportedAt": "2026-07-30T11:38:57.368Z",
+  "exportedAt": "2026-07-31T10:58:53.985Z",
   "config": {
     "start": "2026-07-27",
     "end": "2026-09-06"
@@ -20,6 +20,14 @@
       "min": 120,
       "who": "VPOCS",
       "note": "VPOCS ebéd"
+    },
+    {
+      "id": "vqu3gcvolc",
+      "ts": "2026-07-31T10:58:43.456Z",
+      "type": "call",
+      "min": 10,
+      "who": "Béla",
+      "note": "AI Policy"
     }
   ]
 }
