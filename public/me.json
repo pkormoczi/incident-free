@@ -1,5 +1,5 @@
 {
-  "exportedAt": "2026-07-31T14:39:10.424Z",
+  "exportedAt": "2026-08-04T12:33:22.582Z",
   "config": {
     "start": "2026-07-27",
     "end": "2026-09-06"
@@ -36,6 +36,14 @@
       "min": 10,
       "who": "Zsankó Réka",
       "note": "EAI"
+    },
+    {
+      "id": "5flimteqmy",
+      "ts": "2026-08-04T12:33:11.125Z",
+      "type": "chat",
+      "min": 30,
+      "who": "KH Timesheet",
+      "note": "TIG probléma"
     }
   ]
 }
